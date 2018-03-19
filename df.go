@@ -14,7 +14,6 @@ type MessageContext struct {
 // Command Something the bot should do.
 type Command interface {
 	Name() string
-	Handle(*MessageContext) error // Handle the command.
+	Handle(*MessageContext) error   // Handle the command.
 	PreFlight(*MessageContext) bool // Should the command be executed?
 }
-

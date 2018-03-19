@@ -1,15 +1,16 @@
 package commands
 
 import (
-	"github.com/mbags/df"
-	"strings"
 	"math/rand"
+	"strings"
 	"time"
+
+	"github.com/mbags/df"
 )
 
 type Ask struct{}
 
-func (Ask) Name () string {
+func (Ask) Name() string {
 	return "ask"
 }
 
@@ -23,7 +24,7 @@ func (Ask) Handle(ctx *df.MessageContext) error {
 	message := strings.Join(ctx.Args, " ")
 
 	if strings.Contains(message, " or ") {
-		substrs := strings.Split(message," or ")
+		substrs := strings.Split(message, " or ")
 		_, err := ctx.Session.ChannelMessageSend(ctx.Msg.ChannelID, substrs[rand.Intn(len(substrs))])
 		return err
 	}

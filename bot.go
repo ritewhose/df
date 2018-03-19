@@ -1,9 +1,9 @@
 package df
 
 import (
-	"strings"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -33,7 +33,7 @@ func NewBotFromEnv() (*Bot, error) {
 		commandMap: make(map[string]Command),
 	}
 
-	b.AddRawHandler(func(s *discordgo.Session, m *discordgo.MessageCreate){
+	b.AddRawHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
 		b.HandleCommand(m.Message)
 	})
 
@@ -57,7 +57,7 @@ func (b *Bot) HandleCommand(msg *discordgo.Message) {
 	}
 
 	ctx := &MessageContext{
-		Msg: msg,
+		Msg:     msg,
 		Session: b.Session,
 	}
 
