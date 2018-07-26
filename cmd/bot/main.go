@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/mbags/df"
-	"github.com/mbags/df/commands"
+	"github.com/shppr/df"
+	"github.com/shppr/df/commands"
 )
 
 func main() {
