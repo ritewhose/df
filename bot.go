@@ -1,9 +1,9 @@
 package df
 
 import (
-	"strings"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -17,12 +17,19 @@ type Bot struct {
 
 // NewBotFromEnv Construct a bot from environment variables: token, prefix
 func NewBotFromEnv() (*Bot, error) {
-	token := os.Getenv("testtoken")
+	token, ok := os.LookupEnv("dftoken")
+	if !ok {
+		err := errors.New("Token not set in env.")
+		return nil, err
+	}
 
 	pre := "." // get from env
 	sess, err := discordgo.New("Bot " + token)
+	if err != nil {
+		return nil, err
+	}
 
-	sess.Open()
+	err = sess.Open()
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +40,7 @@ func NewBotFromEnv() (*Bot, error) {
 		commandMap: make(map[string]Command),
 	}
 
-	b.AddRawHandler(func(s *discordgo.Session, m *discordgo.MessageCreate){
+	b.AddRawHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
 		b.HandleCommand(m.Message)
 	})
 
@@ -57,7 +64,7 @@ func (b *Bot) HandleCommand(msg *discordgo.Message) {
 	}
 
 	ctx := &MessageContext{
-		Msg: msg,
+		Msg:     msg,
 		Session: b.Session,
 	}
 
