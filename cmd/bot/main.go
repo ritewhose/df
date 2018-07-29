@@ -11,6 +11,7 @@ func main() {
 
 	b.RegisterCommand(commands.In{})
 	b.RegisterCommand(commands.Ask{})
+	b.RegisterCommand(commands.M{})
 
 	select {}
 }
