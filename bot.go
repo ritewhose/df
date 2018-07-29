@@ -23,7 +23,11 @@ func NewBotFromEnv() (*Bot, error) {
 		return nil, err
 	}
 
-	pre := "." // get from env
+	pre := "."
+	if chk, ok := os.LookupEnv("dfprefix"); ok {
+		pre = chk
+	}
+
 	sess, err := discordgo.New("Bot " + token)
 	if err != nil {
 		return nil, err
