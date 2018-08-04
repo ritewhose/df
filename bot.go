@@ -20,7 +20,7 @@ type Bot struct {
 func NewBotFromEnv() (*Bot, error) {
 	token, ok := os.LookupEnv("dftoken")
 	if !ok {
-		err := errors.New("Token not set in env.")
+		err := errors.New("token not set in env")
 		return nil, err
 	}
 
