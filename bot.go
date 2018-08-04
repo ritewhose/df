@@ -1,6 +1,7 @@
 package df
 
 import (
+	"errors"
 	"log"
 	"os"
 	"strings"
