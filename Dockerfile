@@ -1,6 +1,6 @@
 FROM golang:1.9
 
-WORKDIR /go/src/gtb7
+WORKDIR /go/src/github.com/shppr/df
 
 COPY . .
 

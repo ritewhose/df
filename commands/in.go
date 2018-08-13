@@ -21,17 +21,22 @@ func (In) Handle(ctx *df.MessageContext) error {
 		return e
 	}
 
-	replyMsg := fmt.Sprintf("<@%s> ", ctx.Msg.Author.ID)
+	replyMsg := fmt.Sprintf("<@%s>", ctx.Msg.Author.ID)
 
 	dur, err := time.ParseDuration(ctx.Args[0])
 	if err != nil {
 		explainFail(ctx, err, "Invalid duration.")
 		return err
 	}
+	ctx.Session.ChannelMessageSend(ctx.Msg.ChannelID, "See you then!")
 
 	if len(ctx.Args) >= 2 {
+		replyMsg += " "
 		replyMsg += strings.Join(ctx.Args[1:], " ")
+	} else {
+		replyMsg += "!"
 	}
+
 	go func() {
 		<-time.After(dur)
 		ctx.Session.ChannelMessageSend(ctx.Msg.ChannelID, replyMsg)
