@@ -2,6 +2,7 @@ package df
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -45,6 +46,7 @@ func NewBotFromEnv() (*Bot, error) {
 		commandMap: make(map[string]Command),
 	}
 
+
 	b.AddRawHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
 		b.HandleCommand(m.Message)
 	})
@@ -60,11 +62,22 @@ func (b *Bot) AddRawHandler(handler interface{}) {
 	b.Session.AddHandler(handler)
 }
 
+
 func (b *Bot) HandleCommand(msg *discordgo.Message) {
 	tokens := strings.Split(msg.Content, " ")
 	cmdName, validCommand := b.isCommand(tokens[0])
 
 	if !validCommand {
+		if msg.Type != discordgo.MessageTypeGuildMemberJoin {
+			return
+		}
+
+		c, _ := b.Session.State.Channel(msg.ChannelID)
+		g, _ := b.Session.State.Guild(c.GuildID)
+		log.Printf("%s has joined %s.", msg.Author.Username, g.Name)
+		wlcm := fmt.Sprintf("Welcome to %s, %s!", g.Name, msg.Author.Mention())
+
+		b.Session.ChannelMessageSend(msg.ChannelID, wlcm)
 		return
 	}
 
@@ -87,6 +100,7 @@ func (b *Bot) HandleCommand(msg *discordgo.Message) {
 		log.Printf("[HandleCommand] %s\n", e)
 	}
 }
+
 
 func (b *Bot) isCommand(s string) (string, bool) {
 	if len(s) == 1 {
