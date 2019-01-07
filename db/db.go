@@ -57,7 +57,7 @@ func (qt *Quote) Add() error {
 }
 
 func QuoteCount() int64 {
-	return count.Val()
+	return count
 }
 
 func SafeId(id int64) int64 {
