@@ -28,7 +28,10 @@ func (In) Handle(ctx *df.MessageContext) error {
 		explainFail(ctx, err, "Invalid duration.")
 		return err
 	}
-	ctx.Session.ChannelMessageSend(ctx.Msg.ChannelID, "See you then!")
+
+	replyTime := time.Now().Add(dur)
+	ackMsg := fmt.Sprintf("See you at: %s!", replyTime.UTC().Format(time.UnixDate))
+	ctx.Session.ChannelMessageSend(ctx.Msg.ChannelID, ackMsg)
 
 	if len(ctx.Args) >= 2 {
 		replyMsg += " "

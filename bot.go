@@ -2,7 +2,7 @@ package df
 
 import (
 	"errors"
-	"fmt"
+	// "fmt"
 	"log"
 	"os"
 	"strings"
@@ -68,9 +68,11 @@ func (b *Bot) HandleCommand(msg *discordgo.Message) {
 	cmdName, validCommand := b.isCommand(tokens[0])
 
 	if !validCommand {
+	/*
 		if msg.Type != discordgo.MessageTypeGuildMemberJoin {
 			return
 		}
+		b.ChannelMessageDelete(msg.ChannelID, msg.ID)
 
 		c, _ := b.Session.State.Channel(msg.ChannelID)
 		g, _ := b.Session.State.Guild(c.GuildID)
@@ -78,6 +80,8 @@ func (b *Bot) HandleCommand(msg *discordgo.Message) {
 		wlcm := fmt.Sprintf("Welcome to %s, %s!", g.Name, msg.Author.Mention())
 
 		b.Session.ChannelMessageSend(msg.ChannelID, wlcm)
+
+	*/
 		return
 	}
 
