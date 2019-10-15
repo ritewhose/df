@@ -1,0 +1,1 @@
+module github.com/shppr/dfgo 1.13require (        github.com/bwmarrin/discordgo latest        github.com/gorilla/websocket latest        github.com/mattn/go-sqlite3 latest        golang.org/x/crypto latest)
