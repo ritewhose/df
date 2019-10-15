@@ -1,61 +1,71 @@
 package commands
 
 import (
-	"errors"
 	"fmt"
-	"github.com/shppr/df"
+	"strconv"
 	"strings"
 	"time"
+	"github.com/shppr/df"
 )
 
-type In struct{}
+var conversionFactors = map[string]float64{
+	"y":  365.25 * 24 * 60 * 60,
+	"mo": 29.53059 * 24 * 60 * 60,
+	"d":  24 * 60 * 60,
+	"h":  60 * 60,
+	"m":  60,
+	"s":  1,
+}
 
-func (In) Name() string {
+type Timer struct {
+	// Client timer.TimerClient
+}
+
+func (Timer) Name() string {
 	return "in"
 }
 
-func (In) Handle(ctx *df.MessageContext) error {
-	if len(ctx.Args) == 0 {
-		e := errors.New("Invalid duration from user")
-		explainFail(ctx, e, "Provide a duration....")
-		return e
+func (Timer) PreFlight(ctx *df.MessageContext) bool {
+	return true
+}
+
+func (Timer) Handle(ctx *df.MessageContext) error {
+	unit := strings.TrimLeft(ctx.Args[0], "0123456789")
+	durationString := strings.TrimSuffix(ctx.Args[0], unit)
+	conversion, ok := conversionFactors[unit]
+	if !ok {
+		ctx.Session.ChannelMessageSend(ctx.Msg.ChannelID, "Invalid duration.")
+		return nil
 	}
 
-	replyMsg := fmt.Sprintf("<@%s>", ctx.Msg.Author.ID)
-
-	dur, err := time.ParseDuration(ctx.Args[0])
+	durationNum, err := strconv.ParseFloat(durationString, 64)
 	if err != nil {
-		explainFail(ctx, err, "Invalid duration.")
-		return err
+		ctx.Session.ChannelMessageSend(ctx.Msg.ChannelID, "Invalid input.")
+		return nil
+	}
+
+	durationConverted := int(conversion * durationNum)
+
+	replyMsg := fmt.Sprintf("<@%s>: ", ctx.Msg.Author.ID)
+
+	if len(ctx.Args) > 1 {
+		replyMsg += strings.Join(ctx.Args[1:], " ")
+	}
+
+	dur, err := time.ParseDuration(fmt.Sprintf("%ds", durationConverted))
+	if err != nil {
+		ctx.Session.ChannelMessageSend(ctx.Msg.ChannelID, "Duration too long (max = 292 years).")
+		return fmt.Errorf("[timer] %s", err)
 	}
 
 	replyTime := time.Now().Add(dur)
 	ackMsg := fmt.Sprintf("See you at: %s!", replyTime.UTC().Format(time.UnixDate))
 	ctx.Session.ChannelMessageSend(ctx.Msg.ChannelID, ackMsg)
 
-	if len(ctx.Args) >= 2 {
-		replyMsg += " "
-		replyMsg += strings.Join(ctx.Args[1:], " ")
-	} else {
-		replyMsg += "!"
-	}
-
 	go func() {
-		<-time.After(dur)
+		<-time.After(time.Duration(dur))
 		ctx.Session.ChannelMessageSend(ctx.Msg.ChannelID, replyMsg)
 	}()
 
 	return nil
-}
-
-func (In) PreFlight(ctx *df.MessageContext) bool {
-	return true
-}
-
-func explainFail(ctx *df.MessageContext, err error, msg string) bool {
-	if err != nil {
-		ctx.Session.ChannelMessageSend(ctx.Msg.ChannelID, msg)
-		return true
-	}
-	return false
 }
