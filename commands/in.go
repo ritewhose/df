@@ -17,19 +17,17 @@ var conversionFactors = map[string]float64{
 	"s":  1,
 }
 
-type Timer struct {
-	// Client timer.TimerClient
-}
+type In struct {}
 
-func (Timer) Name() string {
+func (In) Name() string {
 	return "in"
 }
 
-func (Timer) PreFlight(ctx *df.MessageContext) bool {
+func (In) PreFlight(ctx *df.MessageContext) bool {
 	return true
 }
 
-func (Timer) Handle(ctx *df.MessageContext) error {
+func (In) Handle(ctx *df.MessageContext) error {
 	unit := strings.TrimLeft(ctx.Args[0], "0123456789")
 	durationString := strings.TrimSuffix(ctx.Args[0], unit)
 	conversion, ok := conversionFactors[unit]
