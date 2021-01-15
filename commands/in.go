@@ -28,6 +28,10 @@ func (In) PreFlight(ctx *df.MessageContext) bool {
 }
 
 func (In) Handle(ctx *df.MessageContext) error {
+	if len(ctx.Args) == 0 {
+		ctx.Session.ChannelMessageSend(ctx.Msg.ChannelID, "Usage: `.in [quantity][y,mo,d,h,m,s] [message]`")
+		return nil
+	}
 	unit := strings.TrimLeft(ctx.Args[0], "0123456789")
 	durationString := strings.TrimSuffix(ctx.Args[0], unit)
 	conversion, ok := conversionFactors[unit]
